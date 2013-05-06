@@ -59,7 +59,6 @@ urlpatterns = ('',  # nopep8
 
     url(r'^heartbeat$', include('heartbeat.urls')),
 
-    url(r'^celery_ajax_status/(?P<task_id>.+)/$', 'instructor.views.celery_task_status', name='celery_ajax_status'),
     url(r'^course_task_log_status/(?P<task_id>.+)/$', 'courseware.tasks.course_task_log_status', name='course_task_log_status'),
     url(r'^course_task_log_status/$', 'courseware.tasks.course_task_log_status', name='course_task_log_status'),
 
