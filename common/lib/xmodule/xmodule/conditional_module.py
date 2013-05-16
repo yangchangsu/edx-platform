@@ -70,8 +70,18 @@ class ConditionalModule(ConditionalFields, XModule):
     # value: <name of module attribute>
     conditions_map = {
         'poll_answer': 'poll_answer',  # poll_question attr
+
+        # problem was submitted (it can be wrong)
+        # if student will press reset button after that,
+        # state will be reverted
         'completed': 'is_completed',  # capa_problem attr
+
+        # if student attempted problem
         'attempted': 'is_attempted',  # capa_problem attr
+
+        # if problem is full points
+        'correct': 'is_correct',
+
         'voted': 'voted'  # poll_question attr
     }
 
@@ -92,7 +102,7 @@ class ConditionalModule(ConditionalFields, XModule):
         if xml_value and self.required_modules:
             for module in self.required_modules:
                 if not hasattr(module, attr_name):
-                    # We don't throw an exception here because it is possible for 
+                    # We don't throw an exception here because it is possible for
                     # the descriptor of a required module to have a property but
                     # for the resulting module to be a (flavor of) ErrorModule.
                     # So just log and return false.
