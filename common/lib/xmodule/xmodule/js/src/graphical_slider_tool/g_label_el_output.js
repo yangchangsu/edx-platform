@@ -87,8 +87,9 @@ define('GLabelElOutput', ['logme'], function (logme) {
                 );
                 logme('Error message: "' + err.message + '".');
 
-                $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from string "' + funcString + '".' + '</div>');
-                $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                // Error messages shown to the student were removed as requested by John Hesss
+                // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from string "' + funcString + '".' + '</div>');
+                // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                 paramNames.pop();
 

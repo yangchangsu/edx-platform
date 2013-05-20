@@ -242,8 +242,9 @@ define('Graph', ['logme'], function (logme) {
                 );
                 logme('Error message: "' + err.message + '"');
 
-                $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from the string "' + funcString + '".' + '</div>');
-                $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                // Error messages shown to the student were removed as requested by John Hess
+                // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from the string "' + funcString + '".' + '</div>');
+                // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                 paramNames.pop();
 
@@ -709,15 +710,16 @@ define('Graph', ['logme'], function (logme) {
                 );
                 logme('Error message: "' + err.message + '"');
 
-                $('#' + gstId).html(
-                    '<div style="color: red;">' + 'ERROR IN ' +
-                    'XML: Could not create a function from the string "' +
-                    funcString + '" for xrange.min.' + '</div>'
-                );
-                $('#' + gstId).append(
-                    '<div style="color: red;">' + 'Error ' +
-                    'message: "' + err.message + '".' + '</div>'
-                );
+                // Error messages shown to the student were removed as requested by John Hess
+                // $('#' + gstId).html(
+                //     '<div style="color: red;">' + 'ERROR IN ' +
+                //     'XML: Could not create a function from the string "' +
+                //     funcString + '" for xrange.min.' + '</div>'
+                // );
+                // $('#' + gstId).append(
+                //     '<div style="color: red;">' + 'Error ' +
+                //     'message: "' + err.message + '".' + '</div>'
+                // );
 
                 return false;
             }
@@ -790,15 +792,16 @@ define('Graph', ['logme'], function (logme) {
                 );
                 logme('Error message: "' + err.message + '"');
 
-                $('#' + gstId).html(
-                    '<div style="color: red;">' + 'ERROR IN ' +
-                    'XML: Could not create a function from the string "' +
-                    funcString + '" for xrange.max.' + '</div>'
-                );
-                $('#' + gstId).append(
-                    '<div style="color: red;">' + 'Error message: "' +
-                    err.message + '".' + '</div>'
-                );
+                // Error messages shown to the student were removed as requested by John Hess
+                // $('#' + gstId).html(
+                //     '<div style="color: red;">' + 'ERROR IN ' +
+                //     'XML: Could not create a function from the string "' +
+                //     funcString + '" for xrange.max.' + '</div>'
+                // );
+                // $('#' + gstId).append(
+                //     '<div style="color: red;">' + 'Error message: "' +
+                //     err.message + '".' + '</div>'
+                // );
 
                 return false;
             }
@@ -1006,8 +1009,9 @@ define('Graph', ['logme'], function (logme) {
                     );
                     logme('Error message: "' + err.message + '"');
 
-                    $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from the string "' + funcString + '".' + '</div>');
-                    $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                    // Error messages shown to the student were removed as requested by John Hess
+                    // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not create a function from the string "' + funcString + '".' + '</div>');
+                    // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                     paramNames.pop();
                     paramNames.pop();
@@ -1133,8 +1137,9 @@ define('Graph', ['logme'], function (logme) {
                     logme('ERROR: Could not determine xrange start.');
                     logme('Error message: "' + err.message + '".');
 
-                    $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not determine xrange start from defined function.' + '</div>');
-                    $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                    // Error messages shown to the student were removed as requested by John Hess
+                    // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not determine xrange start from defined function.' + '</div>');
+                    // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                     return false;
                 }
@@ -1144,8 +1149,9 @@ define('Graph', ['logme'], function (logme) {
                     logme('ERROR: Could not determine xrange end.');
                     logme('Error message: "' + err.message + '".');
 
-                    $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not determine xrange end from defined function.' + '</div>');
-                    $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                    // Error messages shown to the student were removed as requested by John Hess
+                    // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not determine xrange end from defined function.' + '</div>');
+                    // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                     return false;
                 }
@@ -1175,8 +1181,9 @@ define('Graph', ['logme'], function (logme) {
                         logme('ERROR: Could not generate data.');
                         logme('Error message: "' + err.message + '".');
 
-                        $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not generate data from defined function.' + '</div>');
-                        $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                        // Error messages shown to the student were removed as requested by John Hess
+                        // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not generate data from defined function.' + '</div>');
+                        // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                         return false;
                     }
@@ -1204,8 +1211,9 @@ define('Graph', ['logme'], function (logme) {
                         logme('ERROR: Could not generate data.');
                         logme('Error message: "' + err.message + '".');
 
-                        $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not generate data from function.' + '</div>');
-                        $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
+                        // Error messages shown to the student were removed as requested by John Hess
+                        // $('#' + gstId).html('<div style="color: red;">' + 'ERROR IN XML: Could not generate data from function.' + '</div>');
+                        // $('#' + gstId).append('<div style="color: red;">' + 'Error message: "' + err.message + '".' + '</div>');
 
                         return false;
                     }
