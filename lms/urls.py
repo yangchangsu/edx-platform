@@ -59,8 +59,8 @@ urlpatterns = ('',  # nopep8
 
     url(r'^heartbeat$', include('heartbeat.urls')),
 
-    url(r'^course_task_log_status/(?P<task_id>.+)/$', 'courseware.tasks.course_task_log_status', name='course_task_log_status'),
-    url(r'^course_task_log_status/$', 'courseware.tasks.course_task_log_status', name='course_task_log_status'),
+    url(r'^course_task_log_status/(?P<task_id>.+)/$', 'courseware.task_queue.course_task_log_status', name='course_task_log_status'),
+    url(r'^course_task_log_status/$', 'courseware.task_queue.course_task_log_status', name='course_task_log_status'),
 
     ##
     ## Only universities without courses should be included here.  If
