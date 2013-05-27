@@ -5,22 +5,18 @@ Tests of the word cloud in mongo
 import json
 from operator import itemgetter
 
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
-from student.tests.factories import UserFactory, CourseEnrollmentFactory, UserProfileFactory, AdminFactory
+from student.tests.factories import UserFactory, CourseEnrollmentFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
-from mock import patch, DEFAULT
 from courseware.tests.tests import TEST_DATA_MONGO_MODULESTORE
-from capa.tests.response_xml_factory import StringResponseXMLFactory
-from courseware.tests.factories import StudentModuleFactory
 from xmodule.modulestore import Location
 from xmodule.modulestore.django import modulestore
-from lxml import etree
 from django.test.client import Client
 
 USER_COUNT = 2
+
 
 @override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE)
 class TestWordCloud(ModuleStoreTestCase):
@@ -51,8 +47,10 @@ class TestWordCloud(ModuleStoreTestCase):
         )
 
         self.users = [
-            UserFactory.create(username='robot%d' % i, email='robot+test+%d@edx.org' % i)
-            for i in xrange(USER_COUNT)
+            UserFactory.create(
+                username='robot%d' % i,
+                email='robot+test+%d@edx.org' % i)
+            for i in range(USER_COUNT)
         ]
 
         for user in self.users:
@@ -70,18 +68,32 @@ class TestWordCloud(ModuleStoreTestCase):
 
         # login all users for acces to word cloud
         self.clients = {user: Client() for user in self.users}
-        login_statuses = [self.clients[user].login(username=user.username, password='test')
-                          for user in self.users]
+        login_statuses = [
+            self.clients[user].login(username=user.username, password='test')
+            for user in self.users
+        ]
         self.assertTrue(all(login_statuses))
 
         # check word cloud response for every user
-        self.responses = {user: self.clients[user].post(self.get_url('get_state')) for user in self.users}
+        self.responses = {
+            user: self.clients[user].post(self.get_url('get_state'))
+            for user in self.users
+        }
 
         # word cloud answers to students requests
         self.response_contents = {user: json.loads(response.content) for user, response in
                                   self.responses.items()}
-        self.assertEqual(''.join(set([content['status']
-                        for user, content in self.response_contents.items()])), 'success')
+        self.assertEqual(
+            ''.join(
+                set(
+                    [
+                        content['status']
+                        for _, content in self.response_contents.items()
+                    ]
+                )
+            ),
+            'success'
+        )
         # *** SyntaxError: unexpected EOF while parsing (<stdin>, line 1)
         # ipdb> self.client.post(reverse('modx_dispatch',args=(self.course.id, Location(item.location).url(), 'submit')), {}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         # <django.http.HttpResponse object at 0x1081b1f50>
@@ -135,30 +147,32 @@ class TestWordCloud(ModuleStoreTestCase):
         self.response_contents = {}
         correct_jsons = {}
         for index, user in enumerate(self.users):
-            response = self.clients[user].post(self.get_url('submit'),
-                                    {'student_words[]': input_words},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            response = self.clients[user].post(
+                self.get_url('submit'),
+                {'student_words[]': input_words},
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            )
             self.response_contents[user] = json.loads(response.content)
 
             correct_jsons[user] = {
-            u'status': u'success',
-            u'submitted': True,
-            u'display_student_percents': True,
-            u'student_words': {word: 1+index for word in correct_words},
-            u'total_count': len(input_words) * (1 + index),
-            u'top_words': [{u'text': word, u'percent': 100 / len(input_words), u'size': (1+index)}
-                          for word in correct_words]
+                u'status': u'success',
+                u'submitted': True,
+                u'display_student_percents': True,
+                u'student_words': {word: index + 1 for word in correct_words},
+                u'total_count': len(input_words) * (1 + index),
+                u'top_words': [
+                    {u'text': word, u'percent': 100 / len(input_words), u'size': (1+index)}
+                    for word in correct_words
+                ]
             }
 
-
         for user, content in self.response_contents.items():
-
             self.maxDiff = None
 
             # we should compare top_words for manually, because they are unsorted
             keys_to_compare = set(content.keys()).difference(set(['top_words']))
             self.assertDictEqual(
-                {k: content[k]      for k in keys_to_compare},
+                {k: content[k] for k in keys_to_compare},
                 {k: correct_jsons[user][k] for k in keys_to_compare})
 
             # comparing top_words:
@@ -168,4 +182,3 @@ class TestWordCloud(ModuleStoreTestCase):
 
     # def test_collective_submits(self):
     #     self.assertEquals(self.response.status_code, 200)
-
