@@ -8,8 +8,8 @@ from lxml import etree
 
 from xmodule.poll_module import PollDescriptor
 from xmodule.conditional_module import ConditionalDescriptor
-from xmodule.word_cloud_module import WordCloudDescriptor
 from xmodule.videoalpha_module import VideoAlphaDescriptor
+
 
 class PostData:
     """Class which emulate postdata."""
@@ -17,6 +17,7 @@ class PostData:
         self.dict_data = dict_data
 
     def getlist(self, key):
+        """Mock `getlist` method."""
         return self.dict_data.get(key)
 
 
@@ -27,6 +28,7 @@ class LogicTest(unittest.TestCase):
 
     def setUp(self):
         class EmptyClass:
+            """Empty object."""
             pass
 
         self.system = None
@@ -40,10 +42,13 @@ class LogicTest(unittest.TestCase):
         )
 
     def ajax_request(self, dispatch, get):
+        """Call Xmodule.handle_ajax."""
         return json.loads(self.xmodule.handle_ajax(dispatch, get))
 
 
 class PollModuleTest(LogicTest):
+    """Logic tests for Poll Xmodule."""
+
     descriptor_class = PollDescriptor
     raw_model_data = {
         'poll_answers': {'Yes': 1, 'Dont_know': 0, 'No': 0},
@@ -69,6 +74,7 @@ class PollModuleTest(LogicTest):
 
 
 class ConditionalModuleTest(LogicTest):
+    """Logic tests for Conditional Xmodule."""
     descriptor_class = ConditionalDescriptor
 
     def test_ajax_request(self):
@@ -82,46 +88,8 @@ class ConditionalModuleTest(LogicTest):
         self.assertEqual(html, [])
 
 
-class WordCloudModuleTest(LogicTest):
-    descriptor_class = WordCloudDescriptor
-    raw_model_data = {
-        'all_words': {'cat': 10, 'dog': 5, 'mom': 1, 'dad': 2},
-        'top_words': {'cat': 10, 'dog': 5, 'dad': 2},
-        'submitted': False
-    }
-
-    def test_bad_ajax_request(self):
-
-        # TODO: move top global test. Formalize all our Xmodule errors.
-        response = self.ajax_request('bad_dispatch', {})
-        self.assertDictEqual(response, {
-            'status': 'fail',
-            'error': 'Unknown Command!'
-        })
-
-    def test_good_ajax_request(self):
-        post_data = PostData({'student_words[]': ['cat', 'cat', 'dog', 'sun']})
-        response = self.ajax_request('submit', post_data)
-        self.assertEqual(response['status'], 'success')
-        self.assertEqual(response['submitted'], True)
-        self.assertEqual(response['total_count'], 22)
-        self.assertDictEqual(
-            response['student_words'],
-            {'sun': 1, 'dog': 6, 'cat': 12}
-        )
-        self.assertListEqual(
-            response['top_words'],
-            [{'text': 'dad', 'size': 2, 'percent': 9.0},
-             {'text': 'sun', 'size': 1, 'percent': 5.0},
-             {'text': 'dog', 'size': 6, 'percent': 27.0},
-             {'text': 'mom', 'size': 1, 'percent': 5.0},
-             {'text': 'cat', 'size': 12, 'percent': 54.0}]
-        )
-
-        self.assertEqual(100.0, sum(i['percent'] for i in response['top_words']) )
-
-
 class VideoAlphaModuleTest(LogicTest):
+    """Logic tests for VideoAlpha Xmodule."""
     descriptor_class = VideoAlphaDescriptor
 
     raw_model_data = {
