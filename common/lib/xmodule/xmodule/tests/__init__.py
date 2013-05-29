@@ -9,7 +9,7 @@ Contains next classes:
 
     2. test_system constructs a test ModuleSystem instance.
 
-    3. tests for calc that should be removed to another file. TODO.
+    3. tests for calc that should be removed to another file.
 """
 
 import unittest

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Word cloud tests in mongo."""
+"""Word cloud integration tests using mongo modulestore."""
 
 import json
 from operator import itemgetter
 
 from . import BaseTestXmodule
 
+
 class TestWordCloud(BaseTestXmodule):
+    """Integration test for word cloud xmodule."""
     TEMPLATE_NAME = "i4x://edx/templates/word_cloud/Word_cloud"
 
     def test_single_and_collective_users_submits(self):
@@ -29,7 +31,7 @@ class TestWordCloud(BaseTestXmodule):
             5. State of word cloud after #4 is still as in #3.
         """
 
-        def check_normal_word_cloud_response(response_contents, correct_jsons):
+        def check_word_cloud_response(response_contents, correct_jsons):
             """Utility function that compares correct and real responses."""
             for username, content in response_contents.items():
 
@@ -129,7 +131,7 @@ class TestWordCloud(BaseTestXmodule):
             }
 
         # 3)
-        check_normal_word_cloud_response(response_contents, correct_jsons)
+        check_word_cloud_response(response_contents, correct_jsons)
 
         # 4)
         response_contents = {}
@@ -169,4 +171,4 @@ class TestWordCloud(BaseTestXmodule):
                     for word in correct_words
                 ]
             }
-        check_normal_word_cloud_response(response_contents, correct_jsons)
+        check_word_cloud_response(response_contents, correct_jsons)

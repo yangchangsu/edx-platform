@@ -66,7 +66,8 @@ class BaseTestXmodule(ModuleStoreTestCase):
         )
 
         # username = robot{0}, password = 'test'
-        self.users = [UserFactory.create() for i in range(self.USER_COUNT)]
+        self.users = [UserFactory.create(username='robot%d' % i, email='robot+test+%d@edx.org' % i)
+                      for i in range(self.USER_COUNT)]
 
         for user in self.users:
             CourseEnrollmentFactory.create(user=user, course_id=self.course.id)
