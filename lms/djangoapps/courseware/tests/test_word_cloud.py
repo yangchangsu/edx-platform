@@ -6,7 +6,6 @@ from operator import itemgetter
 
 from . import BaseTestXmodule
 
-
 class TestWordCloud(BaseTestXmodule):
     TEMPLATE_NAME = "i4x://edx/templates/word_cloud/Word_cloud"
 
