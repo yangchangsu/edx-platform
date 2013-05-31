@@ -11,70 +11,76 @@ class TestWordCloud(BaseTestXmodule):
     """Integration test for word cloud xmodule."""
     TEMPLATE_NAME = "i4x://edx/templates/word_cloud/Word_cloud"
 
-    def test_single_and_collective_users_submits(self):
-        """Test word cloud data flow per single and collective users submits.
+    def _get_users_state(self):
+        """Return current state for each user:
 
-            Make sures that:
-
-            1. Inital state of word cloud is correct. Those state that
-            is sended from server to frontend, when students load word
-            cloud page.
-
-            2. Students can submit data succesfully.
-
-            3. Word cloud data properly updates after students submit.
-
-            4. Next submits produce "already voted" error. Next submits for user
-            are not allowed by user interface, but techically it possible, and
-            word_cloud should properly react.
-
-            5. State of word cloud after #4 is still as in #3.
+        {username: json_state}
         """
-
-        def check_word_cloud_response(response_contents, correct_jsons):
-            """Utility function that compares correct and real responses."""
-            for username, content in response_contents.items():
-
-                # Used in debugger for comparing objects.
-                # self.maxDiff = None
-
-                # We should compare top_words for manually,
-                # because they are unsorted.
-                keys_to_compare = set(content.keys()).difference(set(['top_words']))
-                self.assertDictEqual(
-                    {k: content[k] for k in keys_to_compare},
-                    {k: correct_jsons[username][k] for k in keys_to_compare})
-
-                # comparing top_words:
-                top_words_content = sorted(
-                    content['top_words'],
-                    key=itemgetter('text')
-                )
-                top_words_correct = sorted(
-                    correct_jsons[username]['top_words'],
-                    key=itemgetter('text')
-                )
-                self.assertListEqual(top_words_content, top_words_correct)
-
         # check word cloud response for every user
-        responses = {
-            user.username: self.clients[user.username].post(self.get_url('get_state'))
-            for user in self.users
-        }
+        users_state = {}
 
-        # word cloud answers to students requests
-        response_contents = {
-            username: json.loads(response.content) for username, response in
-            responses.items()
-        }
+        for user in self.users:
+            response = self.clients[user.username].post(self.get_url('get_state'))
+            users_state[user.username] = json.loads(response.content)
+
+        return users_state
+
+    def _post_words(self, words):
+        """Post `words` and return current state for each user:
+
+        {username: json_state}
+        """
+        users_state = {}
+
+        for user in self.users:
+            response = self.clients[user.username].post(
+                self.get_url('submit'),
+                {'student_words[]': words},
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            )
+            users_state[user.username] = json.loads(response.content)
+
+        return users_state
+
+    def _check_response(self, response_contents, correct_jsons):
+        """Utility function that compares correct and real responses."""
+        for username, content in response_contents.items():
+
+            # Used in debugger for comparing objects.
+            # self.maxDiff = None
+
+            # We should compare top_words for manually,
+            # because they are unsorted.
+            keys_to_compare = set(content.keys()).difference(set(['top_words']))
+            self.assertDictEqual(
+                {k: content[k] for k in keys_to_compare},
+                {k: correct_jsons[username][k] for k in keys_to_compare})
+
+            # comparing top_words:
+            top_words_content = sorted(
+                content['top_words'],
+                key=itemgetter('text')
+            )
+            top_words_correct = sorted(
+                correct_jsons[username]['top_words'],
+                key=itemgetter('text')
+            )
+            self.assertListEqual(top_words_content, top_words_correct)
+
+    def test_initial_state(self):
+        """Inital state of word cloud is correct. Those state that
+        is sended from server to frontend, when students load word
+        cloud page.
+        """
+        users_state = self._get_users_state()
+
         self.assertEqual(
             ''.join(set([
                         content['status']
-                        for _, content in response_contents.items()
+                        for _, content in users_state.items()
                         ])),
             'success')
 
-        # 1)
         # correct initial data:
         correct_initial_data = {
             u'status': u'success',
@@ -85,16 +91,18 @@ class TestWordCloud(BaseTestXmodule):
             u'display_student_percents': False
         }
 
-        for _, response_content in response_contents.items():
+        for _, response_content in users_state.items():
             self.assertEquals(response_content, correct_initial_data)
 
-        # 2)
+    def test_post_words(self):
+        """Students can submit data succesfully.
+        Word cloud data properly updates after students submit.
+        """
         input_words = [
             "small",
             "BIG",
             " Spaced ",
             " few words",
-            u"this is unicode Юникод"
         ]
 
         correct_words = [
@@ -102,20 +110,21 @@ class TestWordCloud(BaseTestXmodule):
             u"big",
             u"spaced",
             u"few words",
-            u"this is unicode юникод"
         ]
 
-        response_contents = {}
-        correct_jsons = {}
-        for index, user in enumerate(self.users):
-            response = self.clients[user.username].post(
-                self.get_url('submit'),
-                {'student_words[]': input_words},
-                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-            )
-            response_contents[user.username] = json.loads(response.content)
+        users_state = self._post_words(input_words)
 
-            correct_jsons[user.username] = {
+        self.assertEqual(
+            ''.join(set([
+                        content['status']
+                        for _, content in users_state.items()
+                        ])),
+            'success')
+
+        correct_state = {}
+        for index, user in enumerate(self.users):
+
+            correct_state[user.username] = {
                 u'status': u'success',
                 u'submitted': True,
                 u'display_student_percents': True,
@@ -130,45 +139,79 @@ class TestWordCloud(BaseTestXmodule):
                 ]
             }
 
-        # 3)
-        check_word_cloud_response(response_contents, correct_jsons)
+        self._check_response(users_state, correct_state)
 
-        # 4)
-        response_contents = {}
-        for index, user in enumerate(self.users):
-            response = self.clients[user.username].post(
-                self.get_url('submit'),
-                {'student_words[]': input_words},
-                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-            )
-            response_contents[user.username] = json.loads(response.content)
+    def test_collective_users_submits(self):
+        """Test word cloud data flow per single and collective users submits.
+
+            Make sures that:
+
+            1. Inital state of word cloud is correct. Those state that
+            is sended from server to frontend, when students load word
+            cloud page.
+
+            2. Students can submit data succesfully.
+
+            3. Next submits produce "already voted" error. Next submits for user
+            are not allowed by user interface, but techically it possible, and
+            word_cloud should properly react.
+
+            4. State of word cloud after #3 is still as after #2.
+        """
+
+        # 1.
+        users_state = self._get_users_state()
 
         self.assertEqual(
             ''.join(set([
                         content['status']
-                        for _, content in response_contents.items()
+                        for _, content in users_state.items()
+                        ])),
+            'success')
+
+        # 2.
+        # Invcemental state per user.
+        users_state_after_post = self._post_words(['word1', 'word2'])
+
+        self.assertEqual(
+            ''.join(set([
+                        content['status']
+                        for _, content in users_state_after_post.items()
+                        ])),
+            'success')
+
+        # Final state after all posts.
+        users_state_before_fail = self._get_users_state()
+
+        # 3.
+        users_state_after_post = self._post_words(
+            ['word1', 'word2', 'word3'])
+
+        self.assertEqual(
+            ''.join(set([
+                        content['status']
+                        for _, content in users_state_after_post.items()
                         ])),
             'fail')
 
-        # 5)
-        response_contents = {}
-        correct_jsons = {}
-        for index, user in enumerate(self.users):
-            response = self.clients[user.username].post(self.get_url('get_state'))
-            response_contents[user.username] = json.loads(response.content)
+        # 4.
+        current_users_state = self._get_users_state()
+        self._check_response(users_state_before_fail, current_users_state)
 
-            correct_jsons[user.username] = {
-                u'status': u'success',
-                u'submitted': True,
-                u'display_student_percents': True,
-                u'student_words': {word: self.USER_COUNT for word in correct_words},
-                u'total_count': len(input_words) * self.USER_COUNT,
-                u'top_words': [
-                    {
-                        u'text': word, u'percent': 100 / len(input_words),
-                        u'size': self.USER_COUNT
-                    }
-                    for word in correct_words
-                ]
-            }
-        check_word_cloud_response(response_contents, correct_jsons)
+    def test_unicode(self):
+        input_words = [u" this is unicode Юникод"]
+        correct_words = [u"this is unicode юникод"]
+
+        users_state = self._post_words(input_words)
+
+        self.assertEqual(
+            ''.join(set([
+                        content['status']
+                        for _, content in users_state.items()
+                        ])),
+            'success')
+
+        for user in self.users:
+            self.assertListEqual(
+                users_state[user.username]['student_words'].keys(),
+                correct_words)
