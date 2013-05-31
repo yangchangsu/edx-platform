@@ -5,15 +5,12 @@ Run like this:
 
     rake test_common/lib/xmodule
 
-Contains next classes:
-
-    2. test_system constructs a test ModuleSystem instance.
-
-    3. tests for calc that should be removed to another file.
 """
 
 import unittest
 import os
+import fs
+import fs.osfs
 
 import numpy
 
@@ -23,13 +20,13 @@ from xmodule.x_module import ModuleSystem
 from mock import Mock
 
 open_ended_grading_interface = {
-    'url': 'blah/',
-    'username': 'incorrect_user',
-    'password': 'incorrect_pass',
-    'staff_grading': 'staff_grading',
-    'peer_grading': 'peer_grading',
-    'grading_controller': 'grading_controller'
-}
+        'url': 'blah/',
+        'username': 'incorrect_user',
+        'password': 'incorrect_pass',
+        'staff_grading' : 'staff_grading',
+        'peer_grading' : 'peer_grading',
+        'grading_controller' : 'grading_controller'
+    }
 
 
 def test_system():
@@ -54,17 +51,11 @@ def test_system():
         user=Mock(is_staff=False),
         filestore=Mock(),
         debug=True,
-        xqueue={
-            'interface': None,
-            'callback_url': '/',
-            'default_queuename': 'testqueue',
-            'waittime': 10,
-            'construct_callback': Mock(side_effect="/")
-        },
+        xqueue={'interface': None, 'callback_url': '/', 'default_queuename': 'testqueue', 'waittime': 10, 'construct_callback' : Mock(side_effect="/")},
         node_path=os.environ.get("NODE_PATH", "/usr/local/lib/node_modules"),
         xblock_model_data=lambda descriptor: descriptor._model_data,
         anonymous_student_id='student',
-        open_ended_grading_interface=open_ended_grading_interface
+        open_ended_grading_interface= open_ended_grading_interface
     )
 
 
