@@ -215,3 +215,27 @@ class TestWordCloud(BaseTestXmodule):
             self.assertListEqual(
                 users_state[user.username]['student_words'].keys(),
                 correct_words)
+
+    def test_handle_ajax_incorrect_dispatch(self):
+        responses = {
+            user.username: self.clients[user.username].post(
+                self.get_url('whatever'),
+                {},
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            for user in self.users
+        }
+
+        self.assertEqual(
+            set([
+                response.status_code
+                for _, response in responses.items()
+                ]).pop(),
+            200)
+
+        for user in self.users:
+            self.assertDictEqual(
+                json.loads(responses[user.username].content),
+                {
+                    'status': 'fail',
+                    'error': 'Unknown Command!'
+                })

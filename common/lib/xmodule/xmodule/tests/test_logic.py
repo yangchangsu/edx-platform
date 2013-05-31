@@ -11,16 +11,6 @@ from xmodule.conditional_module import ConditionalDescriptor
 from xmodule.videoalpha_module import VideoAlphaDescriptor
 
 
-class PostData:
-    """Class which emulate postdata."""
-    def __init__(self, dict_data):
-        self.dict_data = dict_data
-
-    def getlist(self, key):
-        """Mock `getlist` method."""
-        return self.dict_data.get(key)
-
-
 class LogicTest(unittest.TestCase):
     """Base class for testing xmodule logic."""
     descriptor_class = None
