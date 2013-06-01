@@ -6,7 +6,17 @@ import sys
 from lxml import etree
 from path import path
 
+from django.core.exceptions import ObjectDoesNotExist
+
+#from course_secrets.models import CourseSecret
+try:
+    from course_secrets.models import CourseSecret
+except ImportError:
+    import pprint
+    pprint.pprint([p for p in sys.path if 'Project' in p])
+    raise
 from pkg_resources import resource_string
+from student.models import unique_id_for_user
 from xblock.core import Scope, String
 from xmodule.editing_module import EditingDescriptor
 from xmodule.html_checker import check_html
@@ -32,10 +42,30 @@ class HtmlModule(HtmlFields, XModule):
     css = {'scss': [resource_string(__name__, 'css/html/display.scss')]}
 
     def get_html(self):
+
+        def course_anonymized_user_id(course_id, user):
+            """Return a user id anynmized by course.
+
+            Helpful for exporting to third-party service providers (like
+            Qualtrics or SurveyMonkey), where we don't want to expose the raw
+            user ID.
+            """
+            try:
+                course_secret = CourseSecret.objects.get(course_id=course_id)
+                unique_id = course_secret.anonymized_user_id(user)
+            except ObjectDoesNotExist:
+                # if there's no CourseSecret for this course, then fall back to
+                # the original unique_id_for_user implementation
+                unique_id = unique_id_for_user(user)
+            return str(unique_id)
+
         # Replace magic field if possible to do so (e.g., not in CMS view)
-        if self.system.anonymous_student_id:
-            return self.data.replace("%%USER_ID%%", str(self.system.anonymous_student_id))
-        return self.data
+        syst = self.system
+        data = self.data
+        if syst.anonymous_student_id:
+            more_unique_id_for_user = course_anonymized_user_id(syst.course_id, syst.user)
+            data = data.replace("%%USER_ID%%", more_unique_id_for_user)
+        return data
 
 
 class HtmlDescriptor(HtmlFields, XmlDescriptor, EditingDescriptor):

@@ -19,6 +19,7 @@ from xmodule.modulestore import Location
 
 from contentstore.course_info_model import get_course_updates, update_course_updates, delete_course_update
 from contentstore.utils import get_lms_link_for_item, add_extra_panel_tab, remove_extra_panel_tab
+from course_secrets import create_course_secret
 from models.settings.course_details import CourseDetails, CourseSettingsEncoder
 from models.settings.course_grading import CourseGradingModel
 from models.settings.course_metadata import CourseMetadata
@@ -135,6 +136,8 @@ def create_new_course(request):
     initialize_course_tabs(new_course)
 
     create_all_course_groups(request.user, new_course.location)
+
+    create_course_secret(new_course.id)
 
     # seed the forums
     seed_permissions_roles(new_course.location.course_id)
