@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from requests.auth import HTTPBasicAuth
 
 from capa.xqueue_interface import XQueueInterface
+from course_secrets.models import CourseSecret
 from courseware.masquerade import setup_masquerade
 from courseware.access import has_access
 from mitxmako.shortcuts import render_to_string
@@ -25,7 +26,7 @@ from .models import StudentModule
 from psychometrics.psychoanalyze import make_psychometrics_data_update_handler
 from student.models import unique_id_for_user
 from xmodule.errortracker import exc_info_to_str
-from xmodule.exceptions import NotFoundError, ProcessingError
+from xmodule.exceptions import NotFoundError, ObjectDoesNotExist, ProcessingError
 from xmodule.modulestore import Location
 from xmodule.modulestore.django import modulestore
 from xmodule.x_module import ModuleSystem
@@ -287,6 +288,22 @@ def get_module_for_descriptor(user, request, descriptor, model_data_cache, cours
                 return True
         return False
 
+    def anonymized_user_id(course_id, user):
+        """Return a user id anynmized by course.
+
+        Helpful for exporting to third-party service providers (like
+        Qualtrics or SurveyMonkey), where we don't want to expose the raw
+        user ID.
+        """
+        try:
+            course_secret = CourseSecret.objects.get(course_id=course_id)
+            unique_id = course_secret.anonymized_user_id(user)
+        except ObjectDoesNotExist:
+            # if there's no CourseSecret for this course, then fall back to
+            # the original unique_id_for_user implementation
+            unique_id = unique_id_for_user(user)
+        return str(unique_id)
+
     # TODO (cpennington): When modules are shared between courses, the static
     # prefix is going to have to be specific to the module, not the directory
     # that the xml was loaded from
@@ -309,7 +326,7 @@ def get_module_for_descriptor(user, request, descriptor, model_data_cache, cours
                           node_path=settings.NODE_PATH,
                           xblock_model_data=xblock_model_data,
                           publish=publish,
-                          anonymous_student_id=unique_id_for_user(user),
+                          anonymous_student_id=anonymized_user_id(user),
                           course_id=course_id,
                           open_ended_grading_interface=open_ended_grading_interface,
                           s3_interface=s3_interface,
