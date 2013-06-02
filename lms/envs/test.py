@@ -175,6 +175,9 @@ FILE_UPLOAD_HANDLERS = (
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 )
 
+############################ PER-COURSE USER ANONYMIZATION #############################
+STANFORD_PER_COURSE_SECRETS = {'Testing/Testing/1.2.3': '2b31eca91b5afd6aa2eddb501b7d3e7750efca44b484f8a8eeeb18081e50a80e'}
+
 ################### Make tests faster
 
 #http://slacy.com/blog/2012/04/make-your-tests-faster-in-django-1-4/

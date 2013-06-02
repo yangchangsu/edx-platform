@@ -29,7 +29,7 @@ open_ended_grading_interface = {
     }
 
 
-def test_system():
+def test_system(test_user=None, course_id=None):
     """
     Construct a test ModuleSystem instance.
 
@@ -48,8 +48,9 @@ def test_system():
         get_module=Mock(),
         render_template=lambda template, context: str(context),
         replace_urls=lambda html: str(html),
-        user=Mock(is_staff=False),
+        user=test_user or Mock(is_staff=False),
         filestore=Mock(),
+        course_id=course_id,
         debug=True,
         xqueue={'interface': None, 'callback_url': '/', 'default_queuename': 'testqueue', 'waittime': 10, 'construct_callback' : Mock(side_effect="/")},
         node_path=os.environ.get("NODE_PATH", "/usr/local/lib/node_modules"),
