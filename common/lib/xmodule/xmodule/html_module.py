@@ -1,10 +1,13 @@
 import copy
 from fs.errors import ResourceNotFoundError
+import hashlib
 import logging
 import os
 import sys
 from lxml import etree
 from path import path
+
+from django.conf import settings
 
 from pkg_resources import resource_string
 from xblock.core import Scope, String
@@ -13,6 +16,18 @@ from xmodule.html_checker import check_html
 from xmodule.stringify import stringify_children
 from xmodule.x_module import XModule
 from xmodule.xml_module import XmlDescriptor, name_to_pathname
+
+# FIXME JRBL put this function somewhere else and move around its imports
+def make_student_id(system):
+    old_unique_id = system.anonymous_student_id
+    secrets = getattr(settings, 'STANFORD_PER_COURSE_SECRETS', {system.course_id: old_unique_id})
+    log.warning("DEBUG JRBL FIXME STANFORD_PER_COURSE_SECRETS[%s]=%s" % (system.course_id, old_unique_id))
+    secret = secrets[system.course_id]
+    new_id = hashlib.sha256()
+    new_id.update(str(secret))
+    new_id.update(str(system.seed))
+    return new_id.hexdigest()
+# FIXME JRBL put this function somewhere else and move around its imports
 
 log = logging.getLogger("mitx.courseware")
 
@@ -32,6 +47,13 @@ class HtmlModule(HtmlFields, XModule):
     css = {'scss': [resource_string(__name__, 'css/html/display.scss')]}
 
     def get_html(self):
+        log.warning("DEBUG JRBL FIXME entering get_html()")
+        log.warning("DEBUG JRBL FIXME got self.system.anonymous_student_id? %s" % self.system.anonymous_student_id)
+        log.warning("DEBUG JRBL FIXME got seed? %s" % str(self.system.seed))
+        if self.system.anonymous_student_id and self.system.seed:
+            anonymous_student_id = make_student_id(self.system)
+            log.warning("DEBUG JRBL FIXME got an anonymous student id %s, generated id %s" % (self.system.anonymous_student_id, anonymous_student_id))
+            return self.data.replace("%%USER_ID%%", anonymous_student_id)
         return self.data
 
 

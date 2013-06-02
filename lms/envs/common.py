@@ -718,6 +718,13 @@ MKTG_URL_LINK_MAP = {
     'PRIVACY': 'privacy_edx',
 }
 
+# FIXME JRBL should live in lms.env and be set by ansible, and should be a dictionary
+# TODO FIXME XXX REMOVE ME
+STANFORD_PER_COURSE_SECRET = '2b31eca91b5afd6aa2eddb501b7d3e7750efca44b484f8a8eeeb18081e50a80e'
+STANFORD_PER_COURSE_SECRETS = {'hello/goodbye/foo_bar_baz': '2b31eca91b5afd6aa2eddb501b7d3e7750efca44b484f8a8eeeb18081e50a80e'}
+# TODO FIXME XXX REMOVE ME
+# FIXME JRBL should live in lms.env and be set by ansible, and should be a dictionary
+
 ############################### THEME ################################
 def enable_theme(theme_name):
     """
