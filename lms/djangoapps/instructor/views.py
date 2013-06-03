@@ -690,6 +690,7 @@ def instructor_dashboard(request, course_id):
 
         vd['dummy_numbers'] = idv.dummy_numbers()
         vd['letter_buckets'] = idv.letter_buckets()
+        vd['enrollment_change'] = idv.enrollment_change()
 
 
     #----------------------------------------
