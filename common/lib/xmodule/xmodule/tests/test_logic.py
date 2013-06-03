@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=W0212,W0232
 """Test for Xmodule functional logic."""
 
 import json
