@@ -247,10 +247,10 @@ class TestWordCloud(BaseTestXmodule):
         context = self.item_module.get_html()
 
         expected_context = {
-            'ajax_url': 'courses/course_id/modx/a_location',
-            'element_class': 'word_cloud',
-            'element_id': 'i4x-MITx-999-word_cloud-Word_Cloud_17',
-            'num_inputs': 5,
-            'submitted': False
+            'ajax_url': self.item_module.system.ajax_url,
+            'element_class': self.item_module.location.category,
+            'element_id': self.item_module.location.html_id(),
+            'num_inputs': 5,  # default value
+            'submitted': False  # default value
         }
         self.assertDictEqual(context, expected_context)
