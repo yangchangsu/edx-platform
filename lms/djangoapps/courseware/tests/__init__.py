@@ -31,7 +31,8 @@ class BaseTestXmodule(ModuleStoreTestCase):
     Any xmodule should overwrite only next parameters for test:
         1. TEMPLATE_NAME
         2. DATA
-        3. COURSE_DATA and USER_COUNT if needed
+        3. MODEL_DATA
+        4. COURSE_DATA and USER_COUNT if needed
 
     This class should not contain any tests, because TEMPLATE_NAME
     should be defined in child class.
@@ -41,7 +42,7 @@ class BaseTestXmodule(ModuleStoreTestCase):
 
     # Data from YAML common/lib/xmodule/xmodule/templates/NAME/default.yaml
     TEMPLATE_NAME = ""
-    DATA = {}
+    DATA = ''
     MODEL_DATA = {'data': '<some_module></some_module>'}
 
     def setUp(self):
@@ -96,7 +97,7 @@ class BaseTestXmodule(ModuleStoreTestCase):
         self.assertTrue(all(self.login_statuses))
 
     def get_url(self, dispatch):
-        """Return word cloud url with dispatch."""
+        """Return item url with dispatch."""
         return reverse(
             'modx_dispatch',
             args=(self.course.id, self.item_url, dispatch)
