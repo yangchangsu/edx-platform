@@ -46,7 +46,6 @@ else:
             {'p': 'p_r'}
         ])
         user = self.users[0]
-        # import ipdb; ipdb.set_trace()
 
         response = self.clients[user.username].post(
             self.get_url('problem_check'),
