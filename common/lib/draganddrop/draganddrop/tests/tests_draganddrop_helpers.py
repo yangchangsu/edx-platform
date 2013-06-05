@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Tests for DnD helper functions."""
 
 import unittest
 
@@ -8,6 +9,7 @@ from ..draganddrop_helpers import flatten_user_answer, clean_user_answer
 
 
 class TestPositionsCompare(unittest.TestCase):
+    """Tests for `PositionsCompare` class."""
     def test_nested_list_and_list1(self):
         self.assertEqual(PositionsCompare([[1, 2], 40]), PositionsCompare([1, 3]))
 
@@ -40,6 +42,7 @@ class TestPositionsCompare(unittest.TestCase):
 
 
 class TestUserAnswerHelpers(unittest.TestCase):
+    """Tests for utils functions."""
     def test_flatten_user_answer_user_answer(self):
         user_answer = [
             {'up': {'first': {'p': 'p_l1'}}},
@@ -90,6 +93,7 @@ class TestUserAnswerHelpers(unittest.TestCase):
 
 
 def suite():
+    """Run all testcases."""
     testcases = [
         TestPositionsCompare,
         TestUserAnswerHelpers

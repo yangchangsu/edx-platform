@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Tests for DnD rules."""
 
 import unittest
 import json
@@ -7,6 +8,7 @@ from ..draganddrop_rules import grade, DragAndDrop
 
 
 class TestDragAndDropRules(unittest.TestCase):
+    """Tests for DnD rules."""
     def test_targets_are_draggable_1(self):
         user_input = json.dumps([
             {'p': 'p_l'},
@@ -764,6 +766,7 @@ class TestDragAndDropRules(unittest.TestCase):
 
 
 class TestDragAndDropPopulate(unittest.TestCase):
+    """Tests for `DragAndDrop` class."""
     def test_population(self):
         correct_answer = {'1': [[40, 10], 29], 'name_with_icon': [20, 20]}
         user_input = '[{"1": [10, 10]}, {"name_with_icon": [20, 20]}]'
@@ -781,6 +784,7 @@ class TestDragAndDropPopulate(unittest.TestCase):
 
 
 class TestDraAndDropComparePositions(unittest.TestCase):
+    """Tests for `compare_positions` method."""
     def test_1(self):
         dnd = DragAndDrop({'1': 't1'}, '[{"1": "t1"}]')
         self.assertTrue(dnd.compare_positions(correct=[[1, 1], [2, 3]],
@@ -839,6 +843,7 @@ class TestDraAndDropComparePositions(unittest.TestCase):
 
 
 def suite():
+    """Run all testcases."""
     testcases = [
         TestDragAndDropPopulate,
         TestDragAndDropRules,
