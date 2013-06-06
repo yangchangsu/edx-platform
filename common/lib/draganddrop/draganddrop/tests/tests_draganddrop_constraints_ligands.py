@@ -176,7 +176,7 @@ else:
     correct = ['incorrect']
 ]]></answer>
 </customresponse>
-        """
+"""
 
         user_answer = json.dumps([
             {"4p": "left-side{0}{6}"},
