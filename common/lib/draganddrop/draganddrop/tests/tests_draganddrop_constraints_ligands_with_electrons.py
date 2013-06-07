@@ -294,17 +294,3 @@ else:
 
         ]
         self.assertEqual(all(constraints), True)
-
-
-def suite():
-    """Run all testcases."""
-    testcases = [
-        TestDragAndDropConstraintsLigandsElectrons
-    ]
-    suites = []
-    for testcase in testcases:
-        suites.append(unittest.TestLoader().loadTestsFromTestCase(testcase))
-    return unittest.TestSuite(suites)
-
-if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())

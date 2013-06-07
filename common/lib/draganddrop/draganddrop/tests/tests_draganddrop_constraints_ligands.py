@@ -248,17 +248,3 @@ else:
             orbitals['d_yz'][0].y == orbitals['d_xy'][0].y == orbitals['d_yz'][0].y == orbitals['3d'][0].y,
         ]
         self.assertEqual(all(constraints), True)
-
-
-def suite():
-    """Run all testcases."""
-    testcases = [
-        TestDragAndDropConstraintsLigands
-    ]
-    suites = []
-    for testcase in testcases:
-        suites.append(unittest.TestLoader().loadTestsFromTestCase(testcase))
-    return unittest.TestSuite(suites)
-
-if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())

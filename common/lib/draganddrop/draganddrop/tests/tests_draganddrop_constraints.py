@@ -4,7 +4,7 @@
 import unittest
 import json
 
-from ..draganddrop_constraints import get_all_dragabbles
+from ..draganddrop_constraints import get_all_dragabbles, BadProperty
 from ..draganddrop_rules import grade
 
 
@@ -637,15 +637,14 @@ class TestDragAndDropConstraints(unittest.TestCase):
         self.assertEqual(dragabbles['house'][6].x, 215)
 
 
-def suite():
-    """Run all testcases."""
-    testcases = [
-        TestDragAndDropConstraints
-    ]
-    suites = []
-    for testcase in testcases:
-        suites.append(unittest.TestLoader().loadTestsFromTestCase(testcase))
-    return unittest.TestSuite(suites)
-
-if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())
+class TestDragAndDropConstraintsBadProperty(unittest.TestCase):
+    """Tests for `BadProperty` behavoiur."""
+    def test_bad_property(self):
+        first_obj = BadProperty()
+        second_obj = BadProperty()
+        self.assertFalse(first_obj == second_obj)
+        self.assertFalse(first_obj != second_obj)
+        self.assertFalse(first_obj < second_obj)
+        self.assertFalse(first_obj > second_obj)
+        self.assertFalse(first_obj <= second_obj)
+        self.assertFalse(first_obj >= second_obj)

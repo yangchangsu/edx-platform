@@ -28,6 +28,17 @@ class TestPositionsCompare(unittest.TestCase):
     def test_string_and_string_list1(self):
         self.assertEqual(PositionsCompare("1"), PositionsCompare(["1"]))
 
+    def test_with_empty_lists(self):
+        self.assertNotEqual(PositionsCompare([]), PositionsCompare([1, 2, 3]))
+        self.assertNotEqual(PositionsCompare(''), PositionsCompare([1, 2, 3]))
+        self.assertNotEqual(PositionsCompare(), PositionsCompare([1, 2, 3]))
+
+        self.assertNotEqual(PositionsCompare([1, 2, 3]), PositionsCompare([]))
+        self.assertNotEqual(PositionsCompare([1, 2, 3]), PositionsCompare(''))
+        self.assertNotEqual(PositionsCompare([1, 2, 3]), PositionsCompare())
+
+        self.assertNotEqual(PositionsCompare([]), PositionsCompare([]))
+
     def test_string_and_string_list2(self):
         self.assertEqual(PositionsCompare("abc"), PositionsCompare("abc"))
 
@@ -90,18 +101,3 @@ class TestUserAnswerHelpers(unittest.TestCase):
             {'up2': 'target4'}
         ]
         self.assertListEqual(clean_user_answer(user_answer), expected_result)
-
-
-def suite():
-    """Run all testcases."""
-    testcases = [
-        TestPositionsCompare,
-        TestUserAnswerHelpers
-    ]
-    suites = []
-    for testcase in testcases:
-        suites.append(unittest.TestLoader().loadTestsFromTestCase(testcase))
-    return unittest.TestSuite(suites)
-
-if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())

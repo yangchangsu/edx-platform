@@ -785,57 +785,13 @@ class DraganddropResponseXmlFactory(CustomResponseXMLFactory):
     """ Factory for producing <customresponse> XML trees
     with draganddrop input"""
 
-    def create_response_element(self, **kwargs):
-        """ Create a <customresponse> XML element.
-
-        Uses **kwargs:
-
-        *cfn*: the Python code to run.  Can be inline code,
-        or the name of a function defined in earlier <script> tags.
-
-        Should have the form: cfn(expect, answer_given, student_answers)
-        where expect is a value (see below),
-        answer_given is a single value (for 1 input)
-        or a list of values (for multiple inputs),
-        and student_answers is a dict of answers by input ID.
-
-        *expect*: The value passed to the function cfn
-
-        *answer*: Inline script that calculates the answer
-        """
-
-        # Retrieve **kwargs
-        cfn = kwargs.get('cfn', None)
-        expect = kwargs.get('expect', None)
-        answer = kwargs.get('answer', None)
-        options = kwargs.get('options', None)
-        cfn_extra_args = kwargs.get('cfn_extra_args', None)
-
-        # Create the response element
-        response_element = etree.Element("customresponse")
-
-        if cfn:
-            response_element.set('cfn', str(cfn))
-
-        if expect:
-            response_element.set('expect', str(expect))
-
-        if answer:
-            answer_element = etree.SubElement(response_element, "answer")
-            answer_element.text = str(answer)
-
-        if options:
-            response_element.set('options', str(options))
-
-        if cfn_extra_args:
-            response_element.set('cfn_extra_args', str(cfn_extra_args))
-
-        return response_element
-
     def create_input_element(self, **kwargs):
         """ Create the <draganddrop_input> element.
-        Uses **kwargs
-        TODO - more docs on parameters
+        Uses **kwargs.
+
+        :param one_per_target: "one_per_target" attribute for
+        <drag_and_drop_input> tag.
+        :type one_per_target: bool.
         """
 
         # Get the **kwargs
